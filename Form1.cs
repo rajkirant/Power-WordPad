@@ -10,6 +10,7 @@ namespace Power_WordPad
       
         string validateInputSentance = @"^([a-zA-Z ]{2,20}) of ([a-zA-Z ]{2,20}) is ([a-zA-Z ]{2,20}).$";
         string IncumbentExtract = "<b>Incumbent<br />[a-zA-Z<=\"/_>. ]+\">([a-zA-Z .]+)</a>";
+        string toolTip;
         AutoCompleteStringCollection autoText = new AutoCompleteStringCollection();
         
         private string fetchinfo(string url, string[] patterns)
@@ -61,8 +62,10 @@ namespace Power_WordPad
                             richTextBox1.SelectionStart = richTextBox1.Text.Length;
                             richTextBox1.SelectionLength = 0;
                         }
-                        textBox1.Text = m.Groups[1].ToString() + " of " + m.Groups[2].ToString() + " is " + correctData;
-
+                       
+                        toolStripMenuItem1.Visible = true;
+                        toolStripMenuItem1.ToolTipText = "aaa";
+                        toolTip = m.Groups[1].ToString() + " of " + m.Groups[2].ToString() + " is " + correctData;
                     }
                 });
                
@@ -71,7 +74,7 @@ namespace Power_WordPad
 
         private void Form1_Load(object sender, EventArgs e)
         {
-           // richTextBox1.Select(0, richTextBox1.Text.Length);
+            
 
         }
 
@@ -89,8 +92,7 @@ namespace Power_WordPad
                 richTextBox1.SelectionColor = Color.Black;
                 richTextBox1.SelectionStart = richTextBox1.Text.Length;
                 richTextBox1.SelectionLength = 0;
-                
-                //e.SuppressKeyPress = true;
+                toolStripMenuItem1.Visible = false;
 
             }
 
@@ -99,6 +101,69 @@ namespace Power_WordPad
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
            
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            richTextBox1.Clear();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(richTextBox1.SelectionLength > 0)
+            {
+                richTextBox1.Copy();
+            }
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.GetDataObject().GetDataPresent(DataFormats.Text))
+            {
+                richTextBox1.Paste();
+            }
+        }
+
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = fontDialog1.ShowDialog();
+            if(dr == DialogResult.OK)
+            {
+                richTextBox1.Font = fontDialog1.Font;
+            }
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(toolTip);
+       
+        }
+
+       
+
+        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuItem1_MouseEnter(object sender, EventArgs e)
+        {
+            toolTip1.SetToolTip(menuStrip1, toolTip);
+        }
+
+        private void toolStripMenuItem1_MouseLeave(object sender, EventArgs e)
+        {
+            toolTip1.SetToolTip(menuStrip1, null);
         }
     }
 
