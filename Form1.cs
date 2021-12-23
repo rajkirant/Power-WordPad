@@ -1,8 +1,6 @@
 using System.Net;
 using System.Text.RegularExpressions;
 namespace Power_WordPad
-
-
 {
 
     public partial class Form1 : Form
@@ -12,7 +10,36 @@ namespace Power_WordPad
         string IncumbentExtract = "<b>Incumbent<br />[a-zA-Z<=\"/_>. ]+\">([a-zA-Z .]+)</a>";
         string toolTip;
         AutoCompleteStringCollection autoText = new AutoCompleteStringCollection();
-        
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        public void scanText(object pattern)
+        {
+
+            this.Invoke((MethodInvoker)delegate ()
+            {
+                Match m = Regex.Match(richTextBox1.Text.Trim(), validateInputSentance);
+                if (m.Success)
+                {
+                    string[] patterns = { IncumbentExtract };
+                    string toBeValidatedData = m.Groups[3].ToString();
+                    string correctData = fetchinfo("https://en.wikipedia.org/w/index.php?search=" + m.Groups[1] + " of " + m.Groups[2], patterns);
+                    if (toBeValidatedData.Length < 3 || !correctData.ToLower().Contains(toBeValidatedData.ToLower()))
+                    {
+                        int startIndexVerifyData = richTextBox1.Text.IndexOf(toBeValidatedData);
+                        richTextBox1.Select(startIndexVerifyData, toBeValidatedData.Length);
+                        richTextBox1.SelectionColor = Color.Red;
+                        richTextBox1.SelectionStart = richTextBox1.Text.Length;
+                        richTextBox1.SelectionLength = 0;
+                    }
+
+                    toolStripMenuItem1.Visible = true;
+                    toolStripMenuItem1.ToolTipText = "aaa";
+                    toolTip = m.Groups[1].ToString() + " of " + m.Groups[2].ToString() + " is " + correctData;
+                }
+            });
+        }
         private string fetchinfo(string url, string[] patterns)
         {
             WebRequest request = WebRequest.Create(url);
@@ -36,48 +63,6 @@ namespace Power_WordPad
             }
             return null;
         }
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
-   
-        public void scanText(object pattern)
-        {
-         
-                this.Invoke((MethodInvoker)delegate ()
-                {
-                Match m = Regex.Match(richTextBox1.Text.Trim(), validateInputSentance);
-                    if (m.Success)
-                    {
-                        System.Diagnostics.Debug.WriteLine("success");
-                        string[] patterns = { IncumbentExtract };
-                        string toBeValidatedData = m.Groups[3].ToString();
-                        string correctData = fetchinfo("https://en.wikipedia.org/w/index.php?search=" + m.Groups[1] + " of " + m.Groups[2], patterns);
-                        if (toBeValidatedData.Length < 3 || !correctData.ToLower().Contains(toBeValidatedData.ToLower()))
-                        {
-                            int startIndexVerifyData = richTextBox1.Text.IndexOf(toBeValidatedData);
-                            richTextBox1.Select(startIndexVerifyData, toBeValidatedData.Length);
-                            richTextBox1.SelectionColor = Color.Red;
-                            richTextBox1.SelectionStart = richTextBox1.Text.Length;
-                            richTextBox1.SelectionLength = 0;
-                        }
-                       
-                        toolStripMenuItem1.Visible = true;
-                        toolStripMenuItem1.ToolTipText = "aaa";
-                        toolTip = m.Groups[1].ToString() + " of " + m.Groups[2].ToString() + " is " + correctData;
-                    }
-                });
-               
-            
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            
-
-        }
-
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
         {
            
@@ -93,31 +78,16 @@ namespace Power_WordPad
                 richTextBox1.SelectionStart = richTextBox1.Text.Length;
                 richTextBox1.SelectionLength = 0;
                 toolStripMenuItem1.Visible = false;
-
             }
-
-
         }
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-           
-        }
-
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             richTextBox1.Clear();
         }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
-
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if(richTextBox1.SelectionLength > 0)
@@ -125,7 +95,6 @@ namespace Power_WordPad
                 richTextBox1.Copy();
             }
         }
-
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (Clipboard.GetDataObject().GetDataPresent(DataFormats.Text))
@@ -133,7 +102,6 @@ namespace Power_WordPad
                 richTextBox1.Paste();
             }
         }
-
         private void fontToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DialogResult dr = fontDialog1.ShowDialog();
@@ -142,25 +110,15 @@ namespace Power_WordPad
                 richTextBox1.Font = fontDialog1.Font;
             }
         }
-
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             MessageBox.Show(toolTip);
        
         }
-
-       
-
-        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void toolStripMenuItem1_MouseEnter(object sender, EventArgs e)
         {
             toolTip1.SetToolTip(menuStrip1, toolTip);
         }
-
         private void toolStripMenuItem1_MouseLeave(object sender, EventArgs e)
         {
             toolTip1.SetToolTip(menuStrip1, null);
